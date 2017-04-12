@@ -1,4 +1,4 @@
-# Ruby and Chef Hacking for Windows Azure
+# Ruby and Chef Hacking for Microsoft Azure
 
 In this hackfest repo, we are going to:
 
