@@ -131,7 +131,7 @@ Those 4 parameters will act as an identity to access and provision Azure Resourc
 ### Ruby App to provision Azure resources 
 
 
-
+  
 
 
 ## Part 2 - Automation Azure provisionning with Chef cookbook
