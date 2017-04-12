@@ -37,7 +37,7 @@ and you're ready to go !
 
 well, not exactly, in fact, like for a user to access Azure Ressources, an App need to have an identity (credential) allowed to access Azure Resources. This is done by creating a Service Principal in Azure Resource Manager mode.
 
-### Create an authorized identity for your Ruby App (Service Principal)
+### Create an authorized identity for your Ruby App (Azure Service Principal)
 
 We are gonna used the new great [Azure CLI 2.O](https://docs.microsoft.com/en-us/cli/azure/overview) for that.
 After you install it, you can begin to play with it :
@@ -117,6 +117,21 @@ and then affect Contributor right to the SP on this specific subscription
 ```bash
 >az role assignment create --assignee 837bf44e-XXXX-XXXX-XXXX-6c87cefd8361 --role Contributor --scope "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9"
 ```
+
+Using a text editor, open or create the file ~/.azure/credentials and add the following section:
+```bash
+[e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9]
+tenant_id="181de188-XXXX-XXXX-XXXX-d3598a78c31d"
+client_id="837bf44e-XXXX-XXXX-XXXX-6c87cefd8361"
+client_secret="XXXXX"
+```
+Those 4 parameters will act as an identity to access and provision Azure Resources (with Ryby App and also later for Chef Cookbooks)
+
+
+### Ruby App to provision Azure resources 
+
+
+
 
 
 ## Part 2 - Automation Azure provisionning with Chef cookbook
