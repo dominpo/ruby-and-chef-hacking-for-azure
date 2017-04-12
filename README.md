@@ -88,9 +88,10 @@ here is the list of all commands to execute:  (for more [information](https://do
   "password": "XXXXXX",
   "tenant": "181de188-XXXX-XXXX-XXXX-d3598a78c31d"
 }
+```
 
 To verify that the Service Principal has been created 
-
+```bash
 >az login --service-principal -u 837bf44e-XXXX-XXXX-XXXX-6c87cefd8361 --password XXXXXXXX --tenant 181de188-XXXX-XXXX-XXXX-d3598a78c31d
 [
   {
@@ -104,21 +105,18 @@ To verify that the Service Principal has been created
       "name": "837bf44e-XXXX-XXXX-XXXX-6c87cefd8361",
       "type": "servicePrincipal"
     }
-  }
+  
 ]
-
+```
 Need to login again with a user which has required right to assign RBAC on the subscription
-C:\Ruby2.3.3\samples>az login 
-
-and then affect Contributor right to the SP on this specific subscription
->az role assignment create --assignee 837bf44e-XXXX-XXXX-XXXX-6c87cefd8361 --role Contributor --scope "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9"
- 
+```bash
+C:\Ruby2.3.3\samples>az login ```
 ```
 
-
-
-
-
+and then affect Contributor right to the SP on this specific subscription
+```bash
+>az role assignment create --assignee 837bf44e-XXXX-XXXX-XXXX-6c87cefd8361 --role Contributor --scope "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9"
+```
 
 
 ## Part 2 - Automation Azure provisionning with Chef cookbook
