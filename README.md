@@ -128,10 +128,22 @@ client_secret="XXXXX"
 Those 4 parameters will act as an identity to access and provision Azure Resources (with Ryby App and also later for Chef Cookbooks)
 
 
-### Ruby App to provision Azure resources 
+### Coding your Ruby App to provision Azure resources 
+
+Again, if you need a great Ruby editing tool. Fee free to download [Visual Studio Code](https://code.visualstudio.com/download) and its [Ruby extension](https://marketplace.visualstudio.com/VSCode)
+
+Download the ruby-app-azure.rb source code (ensure that you create file $home/.azure/credentials with your specific info)
+
+and just run it !
+
+```bash
+ruby ruby-app-azure.rb
+```
 
 
-  
+
+
+
 
 
 ## Part 2 - Automation Azure provisionning with Chef cookbook
