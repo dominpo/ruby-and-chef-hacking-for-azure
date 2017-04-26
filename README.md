@@ -15,7 +15,7 @@ In this hackfest repo, we are going to:
 * Install the [Ruby and Ruby Development Kit](http://rubyinstaller.org/)
 (for exemple on c:\ruby2.3.3)
 
-* To code in ruby (and for chef cookbooks too), [Visual Studio Code](https://code.visualstudio.com/download) with Ruby extension (and Chef extension) is a great tool. 
+* To code in ruby (and for chef cookbooks too), [Visual Studio Code](https://code.visualstudio.com/download) with Ruby extension (and Chef extension), available for Windows, Linux and Mac is a great tool. 
 To install Ruby (and Chef) VS Code Extension, it [here](https://marketplace.visualstudio.com/VSCode)
 
 Verify that Ruby is up and running !
