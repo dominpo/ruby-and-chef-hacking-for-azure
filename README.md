@@ -170,6 +170,10 @@ C:\Users\dominpo>az provider show --namespace "Microsoft.Storage"
   "registrationState": "Registered",
 
 ```
+do the same for the differed used provider :
+
+>az provider register --namespace "Microsoft.Network"
+>az provider register --namespace "Microsoft.Compute"
 
 for more information 
 https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-common-deployment-errors#noregisteredproviderfound 
