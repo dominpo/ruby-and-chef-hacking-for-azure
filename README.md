@@ -182,6 +182,10 @@ do the same for the differed used provider :
 for more information 
 https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-common-deployment-errors#noregisteredproviderfound 
 
+Instead of doing a step by step Azure resource deployment (which cause 1 ARM API call for each resource), you can do ARM template deployment in Ruby as describe [here](https://github.com/Azure-Samples/resource-manager-ruby-template-deployment)
+
+You can also play with some other ruby samples by looking at some others Ruby code [here](https://azure.microsoft.com/fr-fr/resources/samples/?products=azure-resource-manager&platform=ruby)
+
 
 ## Part 2 - Automation Azure provisionning with Chef cookbook
 
@@ -200,7 +204,7 @@ then you can generate a complete application using the Chef generate app command
 ```
 A new directory chefazure-test, files are created. A default recipe file is created chefazure-test/cookbooks/chefazure-test/recipes/default.rb
 
-You can start a free trial of Hosted Chef here : https://manage.chef.io/signup and when done, create a new organization as a repository for your Azure Cookbook. You will then download the Starter Kit which contains required information for the Clients (nodes) to connect like a user private key, an organization validator key file, a knife configuration file.
+You can start a free trial of [Hosted Chef here](https://manage.chef.io/signup) and when done, create a new organization as a repository for your Azure Cookbook. You will then download the Starter Kit which contains required information for the Clients (nodes) to connect like a user private key, an organization validator key file, a knife configuration file.
 Or you can also host your host server on Azure using the Market Place image : https://blog.chef.io/2015/03/30/chef-now-available-in-azure-marketplace/
 
 Microsoft also worked with Chef to develop a Azure VM Extension (ChefClient for Windows and LinuxChefClient for Linux) which permit to automatically boostrap an Azure VM as a Chef Client (or node) : https://github.com/chef-partners/azure-chef-extension
@@ -208,6 +212,15 @@ It is possible to install it using the ARM Template, or using the portal or CLI 
 
 ```bash
 >az vm extension image list --publisher "Chef.Bootstrap.WindowsAzure"
+```
+
+To add this VM extension to an ARM template :
+```bash
+...
+chef_extension client_type: 'ChefClient',                               
+  version: '1210.12'                               
+  runlist: 'role[ webserver]'
+...
 ```
 
 Once you installed Chef Client on an Azure VM (using the portal or CLI), it will registered itself (with the private information you got from the Starter Kit) and you will see the VM in the Hosted Chef Management Portal on the Nodes Tab.
@@ -258,12 +271,34 @@ using Azure CLI, we can see that the Resource Group chef-azure-RG has been creat
 
 While we can create all the Azure Resource with the Azure Chef Provider item like azure_resource_group, azure_storage_account, azure_network_interface, azure_public_ip_address...As mentioned [here](https://github.com/pendrica/chef-provisioning-azurerm), this will be deprecated by the azure_resource_template resource which described an ARM template file (json) which itself describe the complete topology of your Azure Infrastructure.
 For more information about [Azure Resource Manager](https://docs.microsoft.com/en-us/azure/azure-resource-manager/)
-You can get many samples here on the [Azure Quickstart Template Github](https://github.com/Azure/azure-quickstart-templates)
+You can get many ARM Template examples here on the [Azure Quickstart Template Github page](https://github.com/Azure/azure-quickstart-templates)
 
+just pick one that match your need. Download the azuredeploy.json file that contains the ARM Template.
+copy the file to cookbooks\provision\files\default\azuredeploy.json
+and use the azure_resource_template in your recipe 
 
+```bash
+azure_resource_template "chef-deploy" do     
+  resource_group "chef-ruby-azure"     
+  template_source "cookbooks/provision/files/default/azuredeploy.json"     
+ parameters     dnsLabelPrefix: 'chef-azure-book',                             
+                vmName: 'chefrubyazurevm',                             
+                adminUsername: 'azureadmin',                             
+                adminPassword: 'XXXXXX',                             
+                rdpPort: 3389 
+ chef_extension client_type: 'ChefClient',  version: '1210.12'
+end
+```
 
+upload the cookbook to your chef server and run it :
 
-More information on using Chef on Azure can be found here : https://docs.microsoft.com/en-us/azure/virtual-machines/windows/chef-automation
+```bash
+>knife cookbook upload provision
+>chef-client -o recipe[provision::default]
+
+```
+
+More information on using Chef on Azure can be found [here](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/chef-automation)
 
 
 ## Part 3 - Full DevOps with Chef, Ruby, Git and Jenkins
