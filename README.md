@@ -15,7 +15,7 @@ In this hackfest repo, we are going to:
 * Install the [Ruby and Ruby Development Kit](http://rubyinstaller.org/)
 (for exemple on c:\ruby2.3.3)
 
-* To code in ruby (and for chef cookbooks too), [Visual Studio Code](https://code.visualstudio.com/download) with Ruby extension (and Chef extension) is a great tool. 
+* To code in ruby (and for chef cookbooks too), [Visual Studio Code](https://code.visualstudio.com/download) with Ruby extension (and Chef extension), available for Windows, Linux and Mac is a great tool. 
 To install Ruby (and Chef) VS Code Extension, it [here](https://marketplace.visualstudio.com/VSCode)
 
 Verify that Ruby is up and running !
@@ -136,12 +136,47 @@ Download the ruby-app-azure.rb source code (ensure that you create file $home/.a
 
 and just run it !
 
+The ruby program ask you for an Azure Region and Azure Resource Group where it need to create the Azure resource.
+
+If you encounter the issue "MissingSubscriptionRegistration" : "The subscription is not registered to use namespace 'Microsoft.Storage'...
+
+You need to register your subscription with the different ARM providers :
+
 ```bash
-ruby ruby-app-azure.rb
+>az provider show --namespace "Microsoft.Storage"
+{
+  "id": "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9/providers/Microsoft.Storage",
+  "namespace": "Microsoft.Storage",
+  "registrationState": "NotRegistered",
+  ...
+}
+
+>az provider register --namespace "Microsoft.Storage"
+Registering is still on-going. You can monitor using 'az provider show -n Microsoft.Storage'
+
+>az provider show -n Microsoft.Storage
+{
+  "id": "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9/providers/Microsoft.Storage",
+  "namespace": "Microsoft.Storage",
+  "registrationState": "Registering",
+
 ```
+and finally :
+```bash
+C:\Users\dominpo>az provider show --namespace "Microsoft.Storage"
+{
+  "id": "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9/providers/Microsoft.Storage",
+  "namespace": "Microsoft.Storage",
+  "registrationState": "Registered",
 
+```
+do the same for the differed used provider :
 
+>az provider register --namespace "Microsoft.Network"
+>az provider register --namespace "Microsoft.Compute"
 
+for more information 
+https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-common-deployment-errors#noregisteredproviderfound 
 
 
 
