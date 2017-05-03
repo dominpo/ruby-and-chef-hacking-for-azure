@@ -136,7 +136,11 @@ Download the ruby-app-azure.rb source code (ensure that you create file $home/.a
 
 and just run it !
 
-The ruby program ask you for an Azure Region and Azure Resource Group where it need to create the Azure resource.
+```bash
+>ruby ruby-app-azure.rb
+```
+
+The ruby app will ask you for some information like the Azure Region, Resource Group name, VNET name... 
 
 If you encounter the issue "MissingSubscriptionRegistration" : "The subscription is not registered to use namespace 'Microsoft.Storage'...
 
@@ -168,23 +172,93 @@ C:\Users\dominpo>az provider show --namespace "Microsoft.Storage"
   "id": "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9/providers/Microsoft.Storage",
   "namespace": "Microsoft.Storage",
   "registrationState": "Registered",
-
 ```
 do the same for the differed used provider :
-
+```bash
 >az provider register --namespace "Microsoft.Network"
 >az provider register --namespace "Microsoft.Compute"
+```
 
 for more information 
 https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-common-deployment-errors#noregisteredproviderfound 
 
 
-
-
 ## Part 2 - Automation Azure provisionning with Chef cookbook
 
+This part is about the automation of the Azure provisioning with Chef using [Chef Provider for Azure](https://github.com/pendrica/chef-provisioning-azurerm)
+
+Chef permit to do Infrastructure As Code with the notion of Cookbook, which is a collection of Recipes that contains a set of instructions to perform on Nodes (servers running Chef Client). Recipes are written in Chef domain-specific language (DSL) on top of Ruby. Nodes communicate with the Chef Server which is a repository for all cookbooks. 
+
+for more information on Chef Architecture : https://docs.chef.io/chef_overview.html 
+
+To develop and test Chef cookbook locally, you need to install the [ChefDK](https://downloads.chef.io/)
+
+then you can generate a complete application using the Chef generate app command :
+
+```bash
+>chef generate app chefazure-test "Dominique Pochat" --email "dominpo@hotmail.com"
+```
+A new directory chefazure-test, files are created. A default recipe file is created chefazure-test/cookbooks/chefazure-test/recipes/default.rb
+
+You can start a free trial of Hosted Chef here : https://manage.chef.io/signup and when done, create a new organization as a repository for your Azure Cookbook. You will then download the Starter Kit which contains required information for the Clients (nodes) to connect like a user private key, an organization validator key file, a knife configuration file.
+Or you can also host your host server on Azure using the Market Place image : https://blog.chef.io/2015/03/30/chef-now-available-in-azure-marketplace/
+
+Microsoft also worked with Chef to develop a Azure VM Extension (ChefClient for Windows and LinuxChefClient for Linux) which permit to automatically boostrap an Azure VM as a Chef Client (or node) : https://github.com/chef-partners/azure-chef-extension
+It is possible to install it using the ARM Template, or using the portal or CLI for an existing VM.
+
+```bash
+>az vm extension image list --publisher "Chef.Bootstrap.WindowsAzure"
+```
+
+Once you installed Chef Client on an Azure VM (using the portal or CLI), it will registered itself (with the private information you got from the Starter Kit) and you will see the VM in the Hosted Chef Management Portal on the Nodes Tab.
+
+Like the Java App, you need an Azure Service Principal to call the ARM REST API. We can use the same one, we used with the Ruby App. Chef will get the information from our credentials file $home/.azure/credentials (just ensure that the file is there)
+
+Chef Provisioning operates a driver model and there is one for Azure : https://github.com/chef/chef-provisioning
+To install the Azure ARM provider for Chef, just run :
+
+```bash
+>chem gem install chef-provisioning-azurerm
+```
+
+The Chef Provisioning driver for Azure relies a lot of Ruby which communicate with the ARM API to create Azure Resource.
+
+just modify the default.rb recipe file to create a Resource Group in your cookbook with the following :
+
+```bash
+require 'chef/ provisioning/ azurerm' 
+with_driver 'AzureRM:b6e7eee9-YOUR-GUID-HERE-03ab624df016' 
+
+azure_resource_group "chef-azure-RG" do     
+ location 'North Europe'     
+ tags CreatedFor: 'Using Chef to provision Azure Resource' 
+end
+```
+
+then upload this cookbook (and default recipe) on the Chef server using Knife tool :
+```bash
+> knife cookbook upload provision
+```
+
+To test locally this default recipe with our workstation, just run chef-client. The workstation will appear on the Nodes in the Chef Management Portal :
+
+and then run the default recipe :
+
+```bash
+> chef-client -o recipe[ provision:: default]
+```
+
+using Azure CLI, we can see that the Resource Group chef-azure-RG has been created :
+
+```bash
+> az group list 
+```
+
+
+More information on using Chef on Azure can be found here : https://docs.microsoft.com/en-us/azure/virtual-machines/windows/chef-automation
 
 
 
 
 ## Part 3 - Full DevOps with Chef, Ruby, Git and Jenkins
+
