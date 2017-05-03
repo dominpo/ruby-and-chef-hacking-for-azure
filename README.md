@@ -214,6 +214,8 @@ Once you installed Chef Client on an Azure VM (using the portal or CLI), it will
 
 Like the Java App, you need an Azure Service Principal to call the ARM REST API. We can use the same one, we used with the Ruby App. Chef will get the information from our credentials file $home/.azure/credentials (just ensure that the file is there)
 
+
+
 Chef Provisioning operates a driver model and there is one for Azure : https://github.com/chef/chef-provisioning
 To install the Azure ARM provider for Chef, just run :
 
@@ -223,11 +225,11 @@ To install the Azure ARM provider for Chef, just run :
 
 The Chef Provisioning driver for Azure relies a lot of Ruby which communicate with the ARM API to create Azure Resource.
 
-just modify the default.rb recipe file to create a Resource Group in your cookbook with the following :
+just modify the default.rb recipe file to create a Resource Group in your cookbook with the following (replace the Guid with your subscription id) :
 
 ```bash
 require 'chef/ provisioning/ azurerm' 
-with_driver 'AzureRM:b6e7eee9-YOUR-GUID-HERE-03ab624df016' 
+with_driver 'AzureRM:e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9' 
 
 azure_resource_group "chef-azure-RG" do     
  location 'North Europe'     
@@ -254,10 +256,14 @@ using Azure CLI, we can see that the Resource Group chef-azure-RG has been creat
 > az group list 
 ```
 
+While we can create all the Azure Resource with the Azure Chef Provider item like azure_resource_group, azure_storage_account, azure_network_interface, azure_public_ip_address...As mentioned [here](https://github.com/pendrica/chef-provisioning-azurerm), this will be deprecated by the azure_resource_template resource which described an ARM template file (json) which itself describe the complete topology of your Azure Infrastructure.
+For more information about [Azure Resource Manager](https://docs.microsoft.com/en-us/azure/azure-resource-manager/)
+You can get many samples here on the [Azure Quickstart Template Github](https://github.com/Azure/azure-quickstart-templates)
+
+
+
 
 More information on using Chef on Azure can be found here : https://docs.microsoft.com/en-us/azure/virtual-machines/windows/chef-automation
-
-
 
 
 ## Part 3 - Full DevOps with Chef, Ruby, Git and Jenkins
