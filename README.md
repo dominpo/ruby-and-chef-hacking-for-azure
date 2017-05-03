@@ -136,7 +136,11 @@ Download the ruby-app-azure.rb source code (ensure that you create file $home/.a
 
 and just run it !
 
-The ruby program ask you for an Azure Region and Azure Resource Group where it need to create the Azure resource.
+```bash
+>ruby ruby-app-azure.rb
+```
+
+The ruby app will ask you for some information like the Azure Region, Resource Group name, VNET name... 
 
 If you encounter the issue "MissingSubscriptionRegistration" : "The subscription is not registered to use namespace 'Microsoft.Storage'...
 
@@ -168,16 +172,15 @@ C:\Users\dominpo>az provider show --namespace "Microsoft.Storage"
   "id": "/subscriptions/e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9/providers/Microsoft.Storage",
   "namespace": "Microsoft.Storage",
   "registrationState": "Registered",
-
 ```
 do the same for the differed used provider :
-
+```bash
 >az provider register --namespace "Microsoft.Network"
 >az provider register --namespace "Microsoft.Compute"
+```
 
 for more information 
 https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-common-deployment-errors#noregisteredproviderfound 
-
 
 
 
