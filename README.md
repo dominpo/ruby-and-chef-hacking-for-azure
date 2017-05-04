@@ -244,6 +244,8 @@ just modify the default.rb recipe file to create a Resource Group in your cookbo
 require 'chef/ provisioning/ azurerm' 
 with_driver 'AzureRM:e304f6cc-XXXX-XXXX-XXXX-7599c05fd6a9' 
 
+
+
 azure_resource_group "chef-azure-RG" do     
  location 'North Europe'     
  tags CreatedFor: 'Using Chef to provision Azure Resource' 
@@ -302,4 +304,52 @@ More information on using Chef on Azure can be found [here](https://docs.microso
 
 
 ## Part 3 - Full DevOps with Chef, Ruby, Git and Jenkins
+
+Automation of the Azure Provisioning with Chef is Great ! We will now setup Continuous Integration pipeline.
+
+We use the 2 Chef tools, which are deliver with the ChefDk, to do first check for ruby and cookbook syntax verification : 
+[Rubocop](https://github.com/chef/cookstyle)
+[Foodcritic]http://www.foodcritic.io/
+
+and Cookbook Testing with [ChefSpec](https://docs.chef.io/chefspec.html) for Unit Testing and [Test Kitchen](http://kitchen.ci/) for Acceptance Testing.
+
+Test Kitchen is written in Ruby, is distributed with the ChefDF and has plug-in architecture that allows to use it against popular cloud.
+To install the Azure [ARM Driver for TestKitchen](https://github.com/pendrica/kitchen-azurerm) plugin, just run 
+
+```bash
+>chef gem install kitchen-azurerm
+```
+
+and we need to modify the Test Kitchen .kitchen.yml within the Chef Repo to use the AzureRM driver :
+
+```bash
+--- 
+driver:     
+  name: azurerm
+
+driver_config:     
+	subscription_id: '67f8f17a-XXXX-XXXX-XXXX-b36b13bdfb0b'     
+	location: 'North Europe'     
+	machine_size: 'Standard_DS1' 
+
+provisioner:     
+  name: chef_zero 
+
+platforms:    
+  - name: windows2012-r2         
+   driver_config:             
+   image_urn: Canonical:UbuntuServer: 14.04.3-LTS:latest         
+  transport:             
+   name: winrm 
+   verifier:     
+    name: inspec 
+
+suites:    
+ -name: default
+ run_list:            
+  - recipe[ chefazureprov:: default]         
+  attributes:
+```
+
+
 
