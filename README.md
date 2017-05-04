@@ -305,51 +305,72 @@ More information on using Chef on Azure can be found [here](https://docs.microso
 
 ## Part 3 - Full DevOps with Chef, Ruby, Git and Jenkins
 
-Automation of the Azure Provisioning with Chef is Great ! We will now setup Continuous Integration pipeline.
+Automate Azure Provisioning with Chef is Great ! Let's now setup Continuous Integration pipeline for Azure with Chef and Jenkins.
 
-We use the 2 Chef tools, which are deliver with the ChefDk, to do first check for ruby and cookbook syntax verification : 
-[Rubocop](https://github.com/chef/cookstyle)
-[Foodcritic]http://www.foodcritic.io/
+We can use the 2 Chef tools to check ruby and cookbook syntax which are delivered with the ChefDk. 
+The first one is [Rubocop](https://github.com/chef/cookstyle) and second one is [Foodcritic]http://www.foodcritic.io/
 
-and Cookbook Testing with [ChefSpec](https://docs.chef.io/chefspec.html) for Unit Testing and [Test Kitchen](http://kitchen.ci/) for Acceptance Testing.
+Cookbook Testing can be done with [ChefSpec](https://docs.chef.io/chefspec.html) for Unit Testing and [Test Kitchen](http://kitchen.ci/) for Acceptance Testing. ChefSpec is the framework that simulate Chef Client run to test recipes. Test Kitchen is a test framework that will allow us to execute code on the Azure platform.
 
-Test Kitchen is written in Ruby, is distributed with the ChefDF and has plug-in architecture that allows to use it against popular cloud.
-To install the Azure [ARM Driver for TestKitchen](https://github.com/pendrica/kitchen-azurerm) plugin, just run 
+Test Kitchen is written in Ruby, and is also distributed with the ChefDF. It has a plug-in architecture that allows to use it against popular cloud. To install the Azure [ARM Driver for TestKitchen](https://github.com/pendrica/kitchen-azurerm) plugin, just run 
 
 ```bash
 >chef gem install kitchen-azurerm
 ```
 
-and we need to modify the Test Kitchen .kitchen.yml within the Chef Repo to use the AzureRM driver :
+It will used also the .azure/credentials file mentionned in previous steps
+
+and we need to modify the Test Kitchen .kitchen.yml within the Chef Repo to use the AzureRM driver.
+For exemple to provision a Windows Server 2012 :
 
 ```bash
---- 
-driver:     
+
+---
+driver:
   name: azurerm
 
-driver_config:     
-	subscription_id: '67f8f17a-XXXX-XXXX-XXXX-b36b13bdfb0b'     
-	location: 'North Europe'     
-	machine_size: 'Standard_DS1' 
+driver_config:
+  subscription_id: '67f8f17a-7aee-47a1-9033-b36b13bdfb0b'
+  location: 'North Europe'
+  machine_size: 'Standard_DS1'
 
-provisioner:     
-  name: chef_zero 
+provisioner:
+  name: chef_zero
 
-platforms:    
-  - name: windows2012-r2         
-   driver_config:             
-   image_urn: Canonical:UbuntuServer: 14.04.3-LTS:latest         
-  transport:             
-   name: winrm 
-   verifier:     
-    name: inspec 
+platforms:
+  - name: windows2012-r2
+    driver_config:
+      image_urn: MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter:latest
+    transport:
+      name: winrm
 
-suites:    
- -name: default
- run_list:            
-  - recipe[ chefazureprov:: default]         
-  attributes:
+verifier:
+  name: inspec
+
+suites:
+  - name: default
+    run_list:
+      - recipe[chefazureprov::default]
+    attributes:
+
 ```
 
+and then run Test Kitchen :
 
-
+```bash
+C:\Users\dominpo\chef\chefazureprov>kitchen create
+-----> Starting Kitchen (v1.15.0)
+-----> Creating <default-windows2012-r2>...
+       Azure environment: Azure
+       Creating Resource Group: kitchen-default-windows2012-r2-20170504T202803
+       Creating deployment: deploy-3aca1140530d152c
+       Adding WinRM configuration to provisioning profile.
+       Resource Microsoft.Storage/storageAccounts 'storage3aca1140530d152c' provisioning status is Running
+       Resource Microsoft.Compute/virtualMachines 'vm' provisioning status is Running
+       ...
+       Resource Microsoft.Compute/virtualMachines 'vm' provisioning status is Running
+       Resource Template deployment reached end state of 'Succeeded'.
+       IP Address is: 40.69.197.143 [kitchen-3aca1140530d152c.northeurope.cloudapp.azure.com]
+       Finished creating <default-windows2012-r2> (6m27.12s).
+-----> Kitchen is finished. (6m33.44s)
+```
