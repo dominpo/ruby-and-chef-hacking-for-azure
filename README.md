@@ -283,7 +283,7 @@ and use the azure_resource_template in your recipe
 azure_resource_template "chef-deploy" do     
   resource_group "chef-ruby-azure"     
   template_source "cookbooks/provision/files/default/azuredeploy.json"     
- parameters     dnsLabelPrefix: 'chef-azure-book',                             
+ parameters     dnsLabelPrefix: 'chefazuredns',                             
                 vmName: 'chefrubyazurevm',                             
                 adminUsername: 'azureadmin',                             
                 adminPassword: 'XXXXXX',                             
