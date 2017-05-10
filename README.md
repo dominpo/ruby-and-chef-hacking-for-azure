@@ -332,7 +332,7 @@ driver:
   name: azurerm
 
 driver_config:
-  subscription_id: '67f8f17a-7aee-47a1-9033-b36b13bdfb0b'
+  subscription_id: '67f8f17a-XXXX-XXXX-XXXX-b36b13bdfb0b'
   location: 'North Europe'
   machine_size: 'Standard_DS1'
 
@@ -376,6 +376,71 @@ C:\Users\dominpo\chef\chefazureprov>kitchen create
        Finished creating <default-windows2012-r2> (6m27.12s).
 -----> Kitchen is finished. (6m33.44s)
 ```
+
+Let's generate a new cookbook, copy the chefrepo key in a .chef directory and upload the cookbook
+
+```bash
+>chef generate app chefazure-pipeline --copyright "Dominique Pochat" --email "dominpo@hotmail.com"
+Recipe: code_generator::app
+  * directory[C:/Users/dominpo/chef/chefazure-pipeline] action create
+    - create new directory C:/Users/dominpo/chef/chefazure-pipeline
+    ...
+    ...
+  * cookbook_file[C:/Users/dominpo/chef/chefazure-pipeline/.gitignore] action create
+    - create new file C:/Users/dominpo/chef/chefazure-pipeline/.gitignore
+    - update content in file C:/Users/dominpo/chef/chefazure-pipeline/.gitignore from none to 9bbf52
+    (diff output suppressed by config)
+    
+>chefazure-pipeline>mkdir .chef
+
+>chefazure-pipeline\.chef>copy ..\..\..\chef-repo\.chef\*.* .
+..\..\..\chef-repo\.chef\dominpo.pem
+..\..\..\chef-repo\.chef\knife.rb
+..\..\..\chef-repo\.chef\privateSettings.config
+..\..\..\chef-repo\.chef\publicSettings.config
+        4 file(s) copied.
+
+>chefazure-pipeline>knife cookbook upload chefazure-pipeline
+Uploading chefazure-pipeline [0.1.0]
+Uploaded 1 cookbook.
+   
+```
+
+we can used an ubuntu VM ARM template, add the VM Chef extension, and use a cookbook to provision directly Jenkins.
+Chef Jenkins Cookbook is available here : https://supermarket.chef.io/cookbooks/jenkins 
+
+
+```bash
+require 'chef/provisioning/azurerm'
+with_driver 'AzureRM:67f8f17a-XXXX-XXXX-XXXX-b36b13bdfb0b'
+
+azure_resource_group 'chefazure-pipeline' do
+  location 'North Europe'
+end
+
+azure_resource_template 'jenkins-server' do
+  resource_group 'chefazure-pipeline'
+  template_source '.\chefazure-pipeline\files\shared\machine_deploy.json'
+  parameters location: 'North Europe',
+             vmSize: 'Standard_D1',
+             newStorageAccountName: 'chefdominpostg',
+             adminUsername: 'dominpo',
+             adminPassword: 'XXXXXXXXX',
+             dnsNameForPublicIP: 'chefazure-pipeline',
+             imagePublisher: 'Canonical',
+             imageOffer: 'UbuntuServer',
+             imageSKU: '14.04.3-LTS',
+             vmName: 'dominpojenkins'
+  chef_extension client_type: 'LinuxChefClient', version: '1210.12', runlist: 'role[jenkins]'
+end
+
+```
+
+
+
+
+
+
 
 
 
