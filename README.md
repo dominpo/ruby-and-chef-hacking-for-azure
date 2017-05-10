@@ -406,9 +406,7 @@ Uploaded 1 cookbook.
    
 ```
 
-we can used an ubuntu VM ARM template, add the VM Chef extension, and use a cookbook to provision directly Jenkins.
-Chef Jenkins Cookbook is available here : https://supermarket.chef.io/cookbooks/jenkins 
-
+we can write a recipe provisioning-jenkins-server.rb which provision an ubuntu VM ARM template, add the VM Chef extension to it, and use a cookbook to provision directly Jenkins. Chef Jenkins Cookbook is available here : https://supermarket.chef.io/cookbooks/jenkins 
 
 ```bash
 require 'chef/provisioning/azurerm'
@@ -433,8 +431,60 @@ azure_resource_template 'jenkins-server' do
              vmName: 'dominpojenkins'
   chef_extension client_type: 'LinuxChefClient', version: '1210.12', runlist: 'role[jenkins]'
 end
+```
+
+The role jenkins will direct to the Jenkins recipe install_jenkins.rb.
+The GitHub and Build Pipeline plug-ins can be configured also in this recipe. 
+
+```bash
+package 'git' do
+  action :install
+end
+
+jenkins_plugin 'github' do
+  action :install
+  notifies :restart, 'service[jenkins]', :delayed
+end
+
+jenkins_plugin 'build-pipeline-plugin' do
+  action :install
+  notifies :restart, 'service[jenkins]', :delayed
+end
 
 ```
+
+Chef ruby gem dependencies should also be installed on the Jenkins Azure VM directly in the recipe. 
+
+```bash
+package 'build-essential' do
+  action :install
+end
+
+gem_package 'chef-provisioning' do
+  action :install
+end
+
+gem_package 'chef-provisioning-azurerm' do
+  action :install
+end
+
+gem_package 'rspec' do
+  action :install
+end
+
+gem_package 'rake' do
+  action :install
+end
+
+gem_package 'rubocop' do
+  action :install
+end
+
+```
+
+Jenkins jobs will be triggered by changes in the Master branch of our Chef Repo on GitHub.
+
+
 
 
 
