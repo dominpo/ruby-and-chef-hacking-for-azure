@@ -1,4 +1,4 @@
-# Ruby and Chef Hacking for Microsoft Azure
+# Ruby and Chef DevOps Hacking for Microsoft Azure
 
 In this hackfest repo, we are going to:
 
@@ -6,7 +6,7 @@ In this hackfest repo, we are going to:
 
 * Automate the process with Chef using [Chef Provider for Azure](https://github.com/pendrica/chef-provisioning-azurerm)
 
-* Setup full DevOps with Jenkins 
+* Setup full DevOps with Chef, Github and Jenkins for Windows Azure
 
 
 ## Part 1 - Ruby code to provision your Azure Resources
@@ -316,6 +316,8 @@ Test Kitchen is written in Ruby, and is also distributed with the ChefDF. It has
 
 ```bash
 >chef gem install kitchen-azurerm
+
+
 ```
 
 It will used also the .azure/credentials file mentionned in previous steps
@@ -374,3 +376,12 @@ C:\Users\dominpo\chef\chefazureprov>kitchen create
        Finished creating <default-windows2012-r2> (6m27.12s).
 -----> Kitchen is finished. (6m33.44s)
 ```
+
+
+
+
+
+
+
+
+
