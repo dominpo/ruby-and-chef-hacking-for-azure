@@ -13,7 +13,7 @@ azure_resource_template 'dev-env' do
              vmSize: 'Standard_D1',
              newStorageAccountName: 'chef-dev-env-stg',
              adminUsername: 'dominpo',
-             adminPassword: 'P?asswor!d1',
+             adminPassword: 'XXXXXXXX',
              dnsNameForPublicIP: 'chefazure-dev',
              imagePublisher: 'Canonical',
              imageOffer: 'UbuntuServer',
