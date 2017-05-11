@@ -13,7 +13,7 @@ azure_resource_template 'jenkins-server' do
              vmSize: 'Standard_D1',
              newStorageAccountName: 'chefdominpostg',
              adminUsername: 'dominpo',
-             adminPassword: 'P?asswor!d1',
+             adminPassword: 'XXXXXXXX',
              dnsNameForPublicIP: 'chefazure-pipeline',
              imagePublisher: 'Canonical',
              imageOffer: 'UbuntuServer',
