@@ -6,7 +6,7 @@ In this hackfest repo, we are going to:
 
 * Automate the process with Chef using [Chef Provider for Azure](https://github.com/pendrica/chef-provisioning-azurerm)
 
-* Setup full DevOps with Chef, Github and Jenkins for Windows Azure
+* Setup the DevOps pipeline with Chef, Github and Jenkins for Windows Azure
 
 
 ## Part 1 - Ruby code to provision your Azure Resources
@@ -499,8 +499,9 @@ The build steps will be to execute, on the jenkins server, rubocop, then upload 
 
 Jenkins will also need to authenticate with Microsoft Azure. For that we need to copy our previous credentials file to the Jenkins home directory /var/lib/jenkins/.azure/credentials 
 
-and finally, we can write our differents recipes to produce our Dev, Test, Production environments. 
-Recipes are very similar that the ones for Jenkins as we need to install Chef Client but with different required role.
+and we can now write our differents recipes to produce our Dev, Test, Production environments. 
+Recipes are very similar that the ones for Jenkins as we also need to install Chef Client but with the different required roles.
+For exemple, a recipe for a dev env. will look like that :
 
 ```bash
 
@@ -528,5 +529,6 @@ azure_resource_template 'dev-env' do
 end
 ```
 
+The final step is to configure Jenkins to trigger builds remotely and configure a Webhooks in Github with a command similar like that :
 
-
+http://chefazure-pipeline.northeurope.cloudapp.azure.com:8080/job/provisioning/build?token=jenkinsgeneratedtoken
