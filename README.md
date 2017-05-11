@@ -460,6 +460,8 @@ package 'build-essential' do
   action :install
 end
 
+
+
 gem_package 'chef-provisioning' do
   action :install
 end
@@ -484,32 +486,47 @@ end
 
 Jenkins jobs will be triggered by changes in the Master branch of our Chef Repo on GitHub.
 When Jenkins has been installed on the Azure VM, a new Jenkins jobs and projects should be created referencing your GitHub Chef Repo.
-The build steps will be to execute rubocop, upload the cookbook to the chef server using knife and execute the provisioning.
+The build steps will be to execute, on the jenkins server, rubocop, then upload the cookbook to the chef server using knife and finally execute the Azure provisioning.
 
+```bash
 >rubocop -D
 
 >knife cookbook upload chefazure-pipeline -c /etc/chef/knife.rb -o ./cookbooks --force 
 
-> 
+>chef-client -c /etc/chef/client-provisioning.rb -o recipe[chefazure-pipeline::default]
 
+```
 
+Jenkins will also need to authenticate with Microsoft Azure. For that we need to copy our previous credentials file to the Jenkins home directory /var/lib/jenkins/.azure/credentials 
 
+and finally, we can write our differents recipes to produce our Dev, Test, Production environments. 
+Recipes are very similar that the ones for Jenkins as we need to install Chef Client but with different required role.
 
+```bash
 
+require 'chef/provisioning/azurerm'
+with_driver 'AzureRM:67f8f17a-XXXX-XXXX-XXXX-b36b13bdfb0b'
 
+azure_resource_group 'chefazure-pipeline-dev' do
+  location 'North Europe'
+end
 
-
-
-
-
-
-
-
-
-
-
-
-
+azure_resource_template 'dev-env' do
+  resource_group 'chefazure-pipeline-dev'
+  template_source 'cookbooks\chefazure-pipeline\files\shared\machine_deploy.json'
+  parameters location: 'North Europe',
+             vmSize: 'Standard_D1',
+             newStorageAccountName: 'chef-dev-env-stg',
+             adminUsername: 'dominpo',
+             adminPassword: 'P?asswor!d1',
+             dnsNameForPublicIP: 'chefazure-dev',
+             imagePublisher: 'Canonical',
+             imageOffer: 'UbuntuServer',
+             imageSKU: '14.04.3-LTS',
+             vmName: 'dominpodev'
+  chef_extension client_type: 'LinuxChefClient', version: '1210.12', runlist: 'role[devrole]'
+end
+```
 
 
 
