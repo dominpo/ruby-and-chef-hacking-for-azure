@@ -483,6 +483,19 @@ end
 ```
 
 Jenkins jobs will be triggered by changes in the Master branch of our Chef Repo on GitHub.
+When Jenkins has been installed on the Azure VM, a new Jenkins jobs and projects should be created referencing your GitHub Chef Repo.
+The build steps will be to execute rubocop, upload the cookbook to the chef server using knife and execute the provisioning.
+
+>rubocop -D
+
+>knife cookbook upload chefazure-pipeline -c /etc/chef/knife.rb -o ./cookbooks --force 
+
+> 
+
+
+
+
+
 
 
 
