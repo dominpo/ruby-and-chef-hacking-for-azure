@@ -2,11 +2,11 @@
 
 In this hackfest repo, we are going to:
 
-* Code in Ruby language to provision Azure resources using the [Ruby SDK for Azure](https://github.com/azure/azure-sdk-for-ruby)
+* Write some Ruby code to provision Azure resources using the [Ruby SDK for Azure](https://github.com/azure/azure-sdk-for-ruby)
 
-* Automate the process with Chef using [Chef Provider for Azure](https://github.com/pendrica/chef-provisioning-azurerm)
+* Automate the provisioning process with Chef using [Chef Provider for Azure](https://github.com/pendrica/chef-provisioning-azurerm)
 
-* Setup the DevOps pipeline with Chef, Github and Jenkins for Windows Azure
+* Setup the DevOps pipeline with Chef, Github and Jenkins
 
 
 ## Part 1 - Ruby code to provision your Azure Resources
@@ -519,7 +519,7 @@ azure_resource_template 'dev-env' do
              vmSize: 'Standard_D1',
              newStorageAccountName: 'chef-dev-env-stg',
              adminUsername: 'dominpo',
-             adminPassword: 'P?asswor!d1',
+             adminPassword: 'XXXXXXXX',
              dnsNameForPublicIP: 'chefazure-dev',
              imagePublisher: 'Canonical',
              imageOffer: 'UbuntuServer',
